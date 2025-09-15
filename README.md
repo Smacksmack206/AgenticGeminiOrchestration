@@ -1,71 +1,87 @@
+#AgenticGeminiOrchestration
+
+### New Agents and Functionality
+I've have added new agents and extended existing ones with specific functionality:
+* **VEO Video Generation Agent:** A new agent was created to generate videos from text prompts using Google's VEO model. It is configured to stream progress updates and provide a GCS URL for the final video. It requires specific Google Cloud environment variables to be set for it to function correctly.
+* **A2A Coder Agent:** The codebase includes a Coder agent (`samples/python/agents/coder/`) that is likely used for code generation or analysis.
+
+***
+
+### Custom User Interface and Hosts
+The most significant changes are in the user interface and host services, as I've updated the UI to be beautiful support video output have quality of life improvements like actually being able to delete a conversations.
+* **Mesop UI (`demo/ui`):** I've built a web-based user interface using the Mesop framework, which includes pages for viewing conversations, a list of tasks, and a list of agents.
+* **Custom Startup Script (`a2av3.sh`):** A shell script was created to manage the startup and shutdown of multiple agents and the UI server simultaneously on different ports so no need to open multi tabs to run new agents they all can instead be started via a2av3.sh to run the project.
+* **Custom Hosts:** Several custom host services were implemented, such as `multiagent`, which acts as a central orchestrator for other agents running on separate ports.
+
+***
+
+### Configuration and Dependency Management
+My project has its own unique configuration and dependency setup.
+* **Environment Variables:** I've added new environment variables like `GOOGLE_GENAI_USE_VERTEXAI`, `GOOGLE_CLOUD_PROJECT`, and `VIDEO_GEN_GCS_BUCKET` to support the new VEO agent and other Google Cloud services.
+* **Project and Dependency Files:** The `pyproject.toml` and `uv.lock` files show that I've managed project dependencies and a virtual environment separately from the core framework.
+* **Linting and Formatting:** I've included `.ruff.toml` and `.prettierrc` files, suggesting a focus on code quality and formatting.
+
 # Agent2Agent (A2A) Samples
-
-<a href="https://studio.firebase.google.com/new?template=https%3A%2F%2Fgithub.com%2Fa2aproject%2Fa2a-samples%2Ftree%2Fmain%2F.firebase-studio">
-  <picture>
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://cdn.firebasestudio.dev/btn/try_light_20.svg">
-    <source
-      media="(prefers-color-scheme: light)"
-      srcset="https://cdn.firebasestudio.dev/btn/try_dark_20.svg">
-    <img
-      height="20"
-      alt="Try in Firebase Studio"
-      src="https://cdn.firebasestudio.dev/btn/try_blue_20.svg">
-  </picture>
-</a>
-
-<div style="text-align: right;">
-  <details>
-    <summary>🌐 Language</summary>
-    <div style="text-align: center;">
-      <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=en">English</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=zh-CN">简体中文</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=zh-TW">繁體中文</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=ja">日本語</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=ko">한국어</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=hi">हिन्दी</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=th">ไทย</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=fr">Français</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=de">Deutsch</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=es">Español</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=it">Italiano</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=ru">Русский</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=pt">Português</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=nl">Nederlands</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=pl">Polski</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=ar">العربية</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=fa">فارسی</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=tr">Türkçe</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=vi">Tiếng Việt</a>
-      | <a href="https://openaitx.github.io/view.html?user=a2aproject&project=a2a-samples&lang=id">Bahasa Indonesia</a>
-    </div>
-  </details>
-</div>
 
 This repository contains code samples and demos which use the [Agent2Agent (A2A) Protocol](https://goo.gle/a2a).
 
-## Related Repositories
+## How to Install and Run
 
-- [A2A](https://github.com/a2aproject/A2A) - A2A Specification and documentation.
-- [a2a-python](https://github.com/a2aproject/a2a-python) - A2A Python SDK.
-- [a2a-inspector](https://github.com/a2aproject/a2a-inspector) - UI tool for inspecting A2A enabled agents.
+To get started with this project, follow these steps:
 
-## Project Customizations and Adding New Agents
+1.  **Clone the Repository:**
+    ```bash
+    git clone git@github.com:Smacksmack206/AgenticGeminiOrchestration.git
+    cd AgenticGeminiOrchestration
+    ```
 
-This section outlines recent changes made to improve the user experience (UX) and provides instructions on how to add new agents to this project.
+2.  **Set up Python Virtual Environment and Install Dependencies:**
+    It's recommended to use `uv` for dependency management.
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate
+    uv sync
+    ```
+    *Note: If `uv` is not installed, you can install it via `pip install uv` or use `pip install -r requirements.txt` if a `requirements.txt` is available.*
 
-### UX Improvements and Script Refactoring
+3.  **Configure Environment Variables (for VEO Video Generation Agent):**
+    The `veo_video_gen` agent requires specific Google Cloud environment variables. Set these in your environment before running the `a2av3.sh` script:
+    ```bash
+    export GOOGLE_GENAI_USE_VERTEXAI="TRUE"
+    export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+    export GOOGLE_CLOUD_LOCATION="your-gcp-region" # e.g., us-central1
+    export VIDEO_GEN_GCS_BUCKET="your-gcs-bucket-for-videos"
+    ```
+    Replace `"your-gcp-project-id"`, `"your-gcp-region"`, and `"your-gcs-bucket-for-videos"` with your actual Google Cloud project details.
 
-To streamline the process of starting and managing multiple agents, the `a2a_demo.sh` script has been refactored. Key improvements include:
+4.  **Run the A2A Demo Environment:**
+    The `a2av3.sh` script will start the main UI (dashboard) and any pre-configured agents.
+    ```bash
+    ./a2av3.sh
+    ```
+    Access the dashboard, usually at `http://localhost:8000`.
 
--   **Centralized Agent Management**: Agent ports and their respective startup commands are now defined in arrays (`AGENT_PORTS` and `AGENT_COMMANDS`) at the top of the `a2a_demo.sh` script. This makes it easier to see and modify which agents are started.
--   **Clean Start**: The script now automatically identifies and kills any processes running on the defined agent ports before starting new ones. This ensures a clean environment and avoids port conflicts.
--   **Simplified Execution**: The script now ensures it always runs from the project root, resolving issues with relative paths and virtual environment activation.
+## How to Add a New Agent
 
-### How to Add a New Agent
+This section provides instructions for adding new agents to the project, covering both automated and manual methods.
 
-Follow these steps to add a new Python agent to the project:
+#### Automated Method (Recommended)
+
+This method leverages the `a2av3.sh` script and the dashboard's agent wizard for a streamlined agent creation and configuration process.
+
+1.  **Using the Dashboard Agent Wizard:**
+    *   Start the A2A demo environment by running `./a2av3.sh`. This script will launch the main UI (dashboard) and any pre-configured agents.
+    *   Access the dashboard (usually at `http://localhost:8000` or as configured).
+    *   Navigate to the "Agent Wizard" section within the dashboard. This new feature allows you to add and configure new agents interactively.
+    *   Follow the on-screen prompts to define your new agent's properties, such as name, description, and initial configuration. The wizard will handle the underlying file creation and configuration updates automatically, simplifying the agent creation process.
+
+2.  **Using the `a2av3.sh` script for agent management:**
+    *   The `a2av3.sh` script is designed to simplify the startup and management of agents. It automatically handles port assignments and ensures a clean start by killing existing processes on designated ports.
+    *   While the dashboard wizard automates much of the setup, `a2av3.sh` is the primary script for launching your A2A environment. It ensures that the dashboard and any agents (including those configured via the wizard) are started correctly. You can review the `AGENT_COMMANDS` array within `a2av3.sh` to see how agents are launched, but for new agent creation, the dashboard wizard is the recommended starting point.
+
+#### Manual Method
+
+If you prefer to manually configure your agent or need to perform advanced customizations, follow these steps:
 
 1.  **Create a New Agent Directory**: Navigate to `samples/python/agents/` and create a new directory for your agent (e.g., `my_new_agent`).
 
@@ -102,37 +118,19 @@ Follow these steps to add a new Python agent to the project:
     pip install -e samples/python/agents/my_new_agent
     ```
 
-6.  **Update `a2a_demo.sh`**: Open `a2a_demo.sh` in the project root and add your new agent to the `AGENT_PORTS` and `AGENT_COMMANDS` arrays. Choose a unique port for your agent.
+6.  **Update `a2av3.sh`**: Open `a2av3.sh` in the project root and add your new agent to the `AGENT_PORTS` and `AGENT_COMMANDS` arrays. Choose a unique port for your agent.
 
     ```bash
     # ... existing agents
     declare -a AGENT_PORTS=(8000 10002 12111 12200)
     declare -a AGENT_COMMANDS=(
       # ... existing commands
-      "python -m uvicorn samples.python.agents.my_new_agent.__main__:app --host 0.0.0.0 --port <YOUR_NEW_AGENT_PORT>"
+      "python -m uvicorn samples/python/agents/my_new_agent.__main__:app --host 0.0.0.0 --port <YOUR_NEW_AGENT_PORT>"
     )
     ```
 
-7.  **Test Your Agent**: Run the `a2a` alias from your terminal to start all agents, including your new one. You can then use the `a2a-cli` or the UI to interact with it.
+7.  **Test Your Agent**: Run the `a2av3.sh` script from your terminal to start all agents, including your new one. You can then use the `a2a-cli` or the UI to interact with it.
 
     ```bash
-    a2a
+    ./a2av3.sh
     ```
-
-## Contributing
-
-Contributions welcome! See the [Contributing Guide](CONTRIBUTING.md).
-
-## Getting help
-
-Please use the [issues page](https://github.com/a2aproject/a2a-samples/issues) to provide suggestions, feedback or submit a bug report.
-
-## Disclaimer
-
-This repository itself is not an officially supported Google product. The code in this repository is for demonstrative purposes only.
-
-Important: The sample code provided is for demonstration purposes and illustrates the mechanics of the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.
-
-All data received from an external agent—including but not limited to its AgentCard, messages, artifacts, and task statuses—should be handled as untrusted input. For example, a malicious agent could provide an AgentCard containing crafted data in its fields (e.g., description, name, skills.description). If this data is used without sanitization to construct prompts for a Large Language Model (LLM), it could expose your application to prompt injection attacks.  Failure to properly validate and sanitize this data before use can introduce security vulnerabilities into your application.
-
-Developers are responsible for implementing appropriate security measures, such as input validation and secure handling of credentials to protect their systems and users.
