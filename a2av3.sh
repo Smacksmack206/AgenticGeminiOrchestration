@@ -36,21 +36,25 @@ fi
 # Define agents and their properties
 declare -a AGENT_PORTS=(8000 12111 12200)
 declare -a AGENT_COMMANDS=(
-  "python -m uvicorn demo.ui.main:app --host 0.0.0.0 --port 8000"
-  "python -m uvicorn samples.python.agents.coder.__main__:app --host 0.0.0.0 --port 12111"
-  "python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200"
+  ".venv/bin/python -m uvicorn demo.ui.main:app --host 0.0.0.0 --port 8000 --log-level debug"
+  ".venv/bin/python -m uvicorn samples.python.agents.coder.__main__:app --host 0.0.0.0 --port 12111 --log-level debug"
+  ".venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200"
 )
 
 # Kill any existing processes on the ports we're about to use
 for port in "${AGENT_PORTS[@]}"; do
   pids=$(lsof -t -i:$port)
   if [ -n "$pids" ]; then
-    echo "Killing processes $pids on port $port"
-    kill $pids
+    echo "Attempting to gracefully kill processes $pids on port $port"
+    kill $pids # Send SIGTERM
+    sleep 2 # Give processes time to shut down
+    pids_after_term=$(lsof -t -i:$port)
+    if [ -n "$pids_after_term" ]; then
+      echo "Processes $pids_after_term on port $port are still running. Force killing."
+      kill -9 $pids_after_term # Send SIGKILL
+    fi
   fi
 done
-
-# Activate the virtual environment
 source .venv/bin/activate
 
 # Start all agents and redirect output to log files
@@ -63,7 +67,7 @@ for i in "${!AGENT_COMMANDS[@]}"; do
   log_file="$LOG_DIR/agent_${port}.log"
 
   echo "Starting agent: $cmd (logging to $log_file)"
-  $cmd > "$log_file" 2>&1 &
+  nohup bash -c "source .venv/bin/activate && $cmd" > "$log_file" 2>&1 &
 done
 
 echo "All agents started in the background. Check logs in the 'logs' directory for details."

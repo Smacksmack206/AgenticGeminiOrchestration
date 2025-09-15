@@ -247,12 +247,12 @@ def conversation_card(conversation: StateConversation, index: int):
     
     # Status styling
     status_color = '#10b981' if conversation.is_active else '#6b7280'
-    status_bg = '#ecfdf5' if conversation.is_active else '#f3f4f6'
+    status_bg = '#ecfdf5' if conversation.is_active else '#483550'
     status_text = 'Active' if conversation.is_active else 'Closed'
     
     with me.box(
         style=me.Style(
-            background='white' if not is_active else 'linear-gradient(90deg, #667eea 0%, #667eea 4px, white 4px, white 100%)',
+            background='white' if not is_active else '#483550',
             border_radius=16,
             padding=me.Padding(top=20, bottom=20, left=24, right=24),
             margin=me.Margin(bottom=12),
