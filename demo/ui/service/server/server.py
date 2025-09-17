@@ -40,23 +40,15 @@ class ConversationServer:
     """
 
     def __init__(self, app: FastAPI, http_client: httpx.AsyncClient):
-        agent_manager = os.environ.get('A2A_HOST', 'ADK')
-        self.manager: ApplicationManager
-
-        # Get API key from environment
-        api_key = os.environ.get('GOOGLE_API_KEY', '')
-        uses_vertex_ai = (
+        self._app = app
+        self._http_client = http_client
+        self._api_key = os.environ.get('GOOGLE_API_KEY', '')
+        self._uses_vertex_ai = (
             os.environ.get('GOOGLE_GENAI_USE_VERTEXAI', '').upper() == 'TRUE'
         )
 
-        if agent_manager.upper() == 'ADK':
-            self.manager = ADKHostManager(
-                http_client,
-                api_key=api_key,
-                uses_vertex_ai=uses_vertex_ai,
-            )
-        else:
-            self.manager = InMemoryFakeAgentManager()
+        self.manager: ApplicationManager = None
+
         self._file_cache = {}  # dict[str, FilePart] maps file id to message data
         self._message_to_cache = {}  # dict[str, str] maps message id to cache id
 
@@ -83,16 +75,32 @@ class ConversationServer:
         )
         app.add_api_route('/agent/list', self._list_agents, methods=['POST'])
         app.add_api_route(
+            '/agent/unregister', self._unregister_agent, methods=['POST']
+        )
+        app.add_api_route(
             '/message/file/{file_id}', self._files, methods=['GET']
         )
         app.add_api_route(
             '/api_key/update', self._update_api_key, methods=['POST']
         )
 
-    # Update API key in manager
-    def update_api_key(self, api_key: str):
+    async def initialize_manager(self):
+        agent_manager = os.environ.get('A2A_HOST', 'ADK')
+
+        if agent_manager.upper() == 'ADK':
+            print(f"🔵 SERVER: Creating ADKHostManager")
+            self.manager = ADKHostManager(
+                self._http_client,
+                api_key=self._api_key,
+                uses_vertex_ai=self._uses_vertex_ai,
+            )
+            print(f"🔵 SERVER: Calling async_init")
+            await self.manager.async_init()
+            print(f"🔵 SERVER: async_init completed")
+        else:
+            self.manager = InMemoryFakeAgentManager()
         if isinstance(self.manager, ADKHostManager):
-            self.manager.update_api_key(api_key)
+            self.manager.update_api_key(self._api_key)
 
     async def _create_conversation(self):
         c = await self.manager.create_conversation()
@@ -195,8 +203,14 @@ class ConversationServer:
     async def _register_agent(self, request: Request):
         message_data = await request.json()
         url = message_data['params']
-        self.manager.register_agent(url)
+        await self.manager.register_agent(url)
         return RegisterAgentResponse()
+
+    async def _unregister_agent(self, request: Request):
+        message_data = await request.json()
+        url = message_data['params']
+        success = await self.manager.unregister_agent(url)
+        return UnregisterAgentResponse(result=success)
 
     async def _list_agents(self):
         return ListAgentResponse(result=self.manager.agents)

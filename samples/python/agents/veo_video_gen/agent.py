@@ -406,12 +406,45 @@ class VideoGenerationAgent:
                 if operation_kicked_off
                 else 'VEO operation not started.'
             )
+            
+            # Provide user-friendly error messages
+            error_str = str(e)
+            if 'PERMISSION_DENIED' in error_str or '403' in error_str:
+                user_friendly_message = """🚫 **Video Generation Not Available**
+
+The VEO video generation service requires additional Google Cloud permissions that are not currently configured.
+
+**What you can try:**
+• Contact your administrator to enable VEO access
+• Check that your Google Cloud project has the necessary AI Platform permissions
+• Verify that the VEO model is available in your region
+
+**Technical Details:**
+The system needs `aiplatform.endpoints.predict` permission for the VEO model."""
+            elif 'not found' in error_str.lower() or '404' in error_str:
+                user_friendly_message = """🔍 **VEO Model Not Found**
+
+The VEO video generation model is not available in your current configuration.
+
+**Possible solutions:**
+• Check if VEO is available in your Google Cloud region
+• Verify the model name configuration
+• Contact support for VEO access"""
+            else:
+                user_friendly_message = f"""❌ **Video Generation Error**
+
+An unexpected error occurred while trying to generate your video.
+
+**Error:** {error_str}
+
+Please try again or contact support if the issue persists."""
+            
             error_message = f'An error occurred during video generation stream for session_id {session_id}: {e}. Context: {error_context_msg}'
             logger.exception(error_message)  # Log with traceback
             yield {
                 'is_task_complete': True,
-                'content': error_message,
+                'content': user_friendly_message,
                 'is_error': True,
-                'final_message_text': f'An unexpected error occurred: {e}',
+                'final_message_text': user_friendly_message,
                 'progress_percent': 100,
             }

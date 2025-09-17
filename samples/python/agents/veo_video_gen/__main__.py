@@ -2,6 +2,8 @@ import logging
 import os
 
 import click
+from fastapi import FastAPI # Import FastAPI
+from fastapi.responses import JSONResponse # Import JSONResponse
 
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
@@ -94,7 +96,7 @@ def main(host: str, port: int):
         agent_card = AgentCard(
             name='VEO Video Generation Agent',
             description="This agent uses Google's VEO model to generate videos from text prompts and provides a GCS link to the output.",
-            url=f'http://{host}:{port}/',  # A2A endpoint URL
+            url=f'http://{host}:{port}',  # No trailing slash
             version='1.0.0',
             default_input_modes=VideoGenerationAgent.SUPPORTED_INPUT_CONTENT_TYPES,
             default_output_modes=VideoGenerationAgent.SUPPORTED_OUTPUT_CONTENT_TYPES,
@@ -107,9 +109,21 @@ def main(host: str, port: int):
             task_store=InMemoryTaskStore(),  # Using in-memory task store for this example
         )
 
-        server = A2AStarletteApplication(
+        # Create the A2AStarletteApplication instance
+        a2a_app = A2AStarletteApplication(
             agent_card=agent_card, http_handler=request_handler
-        )
+        ).build() # Build the Starlette app from A2AStarletteApplication
+
+        # Create a FastAPI app
+        app = FastAPI()
+
+        # Mount the A2A application at the root path
+        app.mount("/", a2a_app)
+
+        # Add the agent-card.json route to the FastAPI app
+        @app.get("/.well-known/agent-card.json")
+        async def get_agent_card():
+            return JSONResponse(content=agent_card.model_dump_json())
 
         logger.info(
             f'Starting VEO Video Generation Agent server on http://{host}:{port}'
@@ -117,7 +131,7 @@ def main(host: str, port: int):
 
         import uvicorn
 
-        uvicorn.run(server.build(), host=host, port=port)
+        uvicorn.run(app, host=host, port=port)
 
     except ImportError as e:
         logger.error(

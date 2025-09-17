@@ -1,0 +1,98 @@
+[
+  {
+    "additional_interfaces": null,
+    "capabilities": {
+      "extensions": null,
+      "push_notifications": null,
+      "state_transition_history": null,
+      "streaming": true
+    },
+    "default_input_modes": [
+      "text"
+    ],
+    "default_output_modes": [
+      "text"
+    ],
+    "description": "An agent that can write and execute code.",
+    "documentation_url": null,
+    "icon_url": null,
+    "name": "Coder Agent",
+    "preferred_transport": "JSONRPC",
+    "protocol_version": "0.3.0",
+    "provider": null,
+    "security": null,
+    "security_schemes": null,
+    "signatures": null,
+    "skills": [
+      {
+        "description": "Can write and execute code in a sandboxed environment.",
+        "examples": [
+          "write a python script to print hello world",
+          "execute the previous script"
+        ],
+        "id": "coder",
+        "input_modes": null,
+        "name": "Writes and executes code",
+        "output_modes": null,
+        "security": null,
+        "tags": [
+          "coding",
+          "development"
+        ]
+      }
+    ],
+    "supports_authenticated_extended_card": null,
+    "url": "http://localhost:12111",
+    "version": "1.0.0"
+  },
+  {
+    "additional_interfaces": null,
+    "capabilities": {
+      "extensions": null,
+      "push_notifications": null,
+      "state_transition_history": null,
+      "streaming": true
+    },
+    "default_input_modes": [
+      "text",
+      "text/plain"
+    ],
+    "default_output_modes": [
+      "text/plain",
+      "video/mp4"
+    ],
+    "description": "This agent uses Google's VEO model to generate videos from text prompts and provides a GCS link to the output.",
+    "documentation_url": null,
+    "icon_url": null,
+    "name": "VEO Video Generation Agent",
+    "preferred_transport": "JSONRPC",
+    "protocol_version": "0.3.0",
+    "provider": null,
+    "security": null,
+    "security_schemes": null,
+    "signatures": null,
+    "skills": [
+      {
+        "description": "Generates a video based on a textual description using VEO. Provides progress updates and a link to the final video.",
+        "examples": [
+          "Create a video of a futuristic cityscape at sunset.",
+          "Generate a short clip of a cat playing with a yarn ball in a sunny room."
+        ],
+        "id": "generate_video_from_prompt",
+        "input_modes": null,
+        "name": "Generate Video from Text Prompt (VEO)",
+        "output_modes": null,
+        "security": null,
+        "tags": [
+          "video",
+          "generation",
+          "multimodal",
+          "veo"
+        ]
+      }
+    ],
+    "supports_authenticated_extended_card": null,
+    "url": "http://localhost:12200",
+    "version": "1.0.0"
+  }
+]

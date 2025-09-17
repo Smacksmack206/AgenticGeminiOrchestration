@@ -65,6 +65,12 @@ security_policy = me.SecurityPolicy(
     allowed_connect_srcs=[
         'https://cdn.jsdelivr.net',
         "'self'",
+    ],
+    allowed_font_srcs=[
+        "'self'",
+        'fonts.gstatic.com',
+        'https://r2cdn.perplexity.ai',
+        'data:',
     ]
 )
 
@@ -185,7 +191,8 @@ agent_server = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     httpx_client_wrapper.start()
-    ConversationServer(app, httpx_client_wrapper())
+    conversation_server = ConversationServer(app, httpx_client_wrapper())
+    await conversation_server.initialize_manager()
     app.openapi_schema = None
     app.mount(
         '/',

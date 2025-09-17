@@ -21,6 +21,7 @@ def flatten_content(content: list[tuple[str, str]]) -> str:
 def event_list():
     """Events list component"""
     df_data = {
+        'Timestamp': [],
         'Conversation ID': [],
         'Actor': [],
         'Role': [],
@@ -28,8 +29,20 @@ def event_list():
         'Content': [],
     }
     events = asyncio.run(GetEvents())
-    for e in events:
+    
+    # Sort events by timestamp (chronological order - newest first)
+    events_sorted = sorted(events, key=lambda e: e.timestamp if hasattr(e, 'timestamp') and e.timestamp else 0, reverse=True)
+    
+    for e in events_sorted:
         event = convert_event_to_state(e)
+        # Add timestamp formatting
+        if hasattr(e, 'timestamp') and e.timestamp:
+            import datetime
+            timestamp_str = datetime.datetime.fromtimestamp(e.timestamp).strftime('%H:%M:%S')
+        else:
+            timestamp_str = 'N/A'
+        
+        df_data['Timestamp'].append(timestamp_str)
         df_data['Conversation ID'].append(event.context_id)
         df_data['Role'].append(event.role)
         df_data['Id'].append(event.id)
@@ -40,7 +53,7 @@ def event_list():
         return
     df = pd.DataFrame(
         pd.DataFrame(df_data),
-        columns=['Conversation ID', 'Actor', 'Role', 'Id', 'Content'],
+        columns=['Timestamp', 'Conversation ID', 'Actor', 'Role', 'Id', 'Content'],
     )
     with me.box(
         style=me.Style(

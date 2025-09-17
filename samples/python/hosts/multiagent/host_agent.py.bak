@@ -1,0 +1,223 @@
+import asyncio
+import base64
+import datetime
+import json
+import os
+import uuid
+
+import httpx
+
+from a2a.types import (
+    AgentCard,
+    Artifact,
+    DataPart,
+    FilePart,
+    FileWithBytes,
+    FileWithUri,
+    Message,
+    Part,
+    Role,
+    Task,
+    TaskArtifactUpdateEvent,
+    TaskState,
+    TaskStatus,
+    TaskStatusUpdateEvent,
+    TextPart,
+)
+from google.adk import Runner
+from google.adk.artifacts import InMemoryArtifactService
+from google.adk.events.event import Event as ADKEvent
+from google.adk.events.event_actions import EventActions as ADKEventActions
+from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+from google.adk.sessions.in_memory_session_service import InMemorySessionService
+from google.adk.tools.tool_context import ToolContext
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.models.lite_llm import LiteLlm
+from google.genai import types
+from samples.python.hosts.multiagent.remote_agent_connection import RemoteAgentConnection, TaskCallbackArg
+from demo.ui.utils.agent_card import get_agent_card
+
+
+class HostAgent:
+    """Host Agent."""
+
+    def __init__(
+        self,
+        remote_agent_urls: list[str],
+        http_client: httpx.AsyncClient,
+        task_callback: TaskCallbackArg,
+    ):
+        self._remote_agent_urls = remote_agent_urls
+        self._remote_agents: list[RemoteAgentConnection] = []
+        self._http_client = http_client
+        self._task_callback = task_callback
+
+    async def initialize_remote_agents(self):
+        for url in self._remote_agent_urls:
+            agent_card = await get_agent_card(url)
+            self._remote_agents.append(
+                RemoteAgentConnection(url, self._http_client, self._task_callback, agent_card)
+            )
+
+    def create_agent(self) -> LlmAgent:
+        """Creates the LLM agent for the host agent."""
+        LITELLM_MODEL = os.getenv('LITELLM_MODEL', 'gemini/gemini-2.0-flash-001')
+
+        # Dynamically build structured agent information for the instruction
+        structured_agents_info = []
+        for agent_conn in self._remote_agents:
+            agent_card = agent_conn.card
+            capabilities_list = ", ".join([f'"{skill.name}"' for skill in agent_card.skills])
+            structured_agents_info.append(
+                f"- Name: {agent_card.name}\n  URL: {agent_card.url}\n  Description: {agent_card.description}\n  Capabilities: [{capabilities_list}]"
+            )
+        agents_info = "\n---\n".join(structured_agents_info)
+
+        instruction = f"""
+    You are a host agent responsible for routing user messages to the most appropriate remote agent.
+    Your goal is to ensure that user requests are handled by the agent best equipped for the task.
+
+    When a user sends a message, you will be provided with the `remote_agent_url` of the best-suited agent.
+    Your task is to use the `send_message` tool with the provided `remote_agent_url`.
+
+    If no specific agent is determined for the request, you MUST ask the user for clarification.
+
+    Tools:
+    - send_message(message: str, remote_agent_url: str, session_id: str, task_id: str | None = None): Use this tool to send a message to a remote agent.
+    - get_task_status(task_id: str, remote_agent_url: str, session_id: str): Use this tool to get the status of a task from a remote agent.
+    - cancel_task(task_id: str, remote_agent_url: str, session_id: str): Use this tool to cancel a task from a remote agent.
+
+    Example:
+    User: Can you write a Python script to parse a CSV file?
+    (Host Agent's internal logic determines Coder Agent is best, provides its URL)
+    Agent: send_message(message="Can you write a Python script to parse a CSV file?", remote_agent_url="http://localhost:12111/", session_id="<current_session_id>")
+
+    User: I need help with something, but I'm not sure which agent to use.
+    (Host Agent's internal logic determines no specific agent)
+    Agent: Please tell me more about what you need help with. For example, are you looking for code, video content, or something else?
+    """
+
+        return LlmAgent(
+            model=LiteLlm(model=LITELLM_MODEL),
+            name='host_agent',
+            description='Host agent that can communicate with other agents.',
+            instruction=instruction,
+            tools=[
+                self.send_message,
+                self.get_task_status,
+                self.cancel_task,
+            ],
+        )
+
+    def register_agent_card(self, agent_card: AgentCard):
+        self._remote_agents.append(
+            RemoteAgentConnection(agent_card.url, self._http_client, self._task_callback, agent_card)
+        )
+
+    async def send_message(
+        self,
+        message: str,
+        remote_agent_url: str,
+        session_id: str,
+        task_id: str | None = None,
+    ) -> str:
+        """Sends a message to a remote agent.
+
+        Args:
+            message: The message to send.
+            remote_agent_url: The URL of the remote agent.
+            session_id: The session ID.
+            task_id: The task ID.
+
+        Returns:
+            The response from the remote agent.
+        """
+        print(f"HostAgent: Sending message to {remote_agent_url} for session {session_id}")
+        agent = self._get_remote_agent(remote_agent_url)
+        if not agent:
+            return f'Error: Remote agent {remote_agent_url} not found.'
+        response = await agent.send_message(message, session_id, task_id)
+        return response
+
+    async def get_task_status(
+        self,
+        task_id: str,
+        remote_agent_url: str,
+        session_id: str,
+    ) -> str:
+        """Gets the status of a task from a remote agent.
+
+        Args:
+            task_id: The ID of the task.
+            remote_agent_url: The URL of the remote agent.
+            session_id: The session ID.
+
+        Returns:
+            The status of the task.
+        """
+        agent = self._get_remote_agent(remote_agent_url)
+        if not agent:
+            return f'Error: Remote agent {remote_agent_url} not found.'
+        response = await agent.get_task_status(task_id, session_id)
+        return response
+
+    async def cancel_task(
+        self,
+        task_id: str,
+        remote_agent_url: str,
+        session_id: str,
+    ) -> str:
+        """Cancels a task from a remote agent.
+
+        Args:
+            task_id: The ID of the task.
+            remote_agent_url: The URL of the remote agent.
+            session_id: The session ID.
+
+        Returns:
+            The status of the cancellation.
+        """
+        agent = self._get_remote_agent(remote_agent_url)
+        if not agent:
+            return f'Error: Remote agent {remote_agent_url} not found.'
+        response = await agent.cancel_task(task_id, session_id)
+        return response
+
+    def _get_remote_agent(self, url: str) -> RemoteAgentConnection | None:
+        return next((agent for agent in self._remote_agents if agent.url == url), None)
+
+    def _determine_target_agent(self, user_message: str) -> str | None:
+        user_message_lower = user_message.lower()
+
+        # Explicit routing rules based on keywords
+        if any(keyword in user_message_lower for keyword in ["code", "script", "python", "program", "develop", "execute"]):
+            for agent_conn in self._remote_agents:
+                if agent_conn.card.name == "Coder Agent":
+                    return agent_conn.card.url
+        
+        if any(keyword in user_message_lower for keyword in ["video", "film", "clip", "generate video", "content syndication", "visuals"]):
+            for agent_conn in self._remote_agents:
+                if agent_conn.card.name == "VEO Video Generation Agent":
+                    return agent_conn.card.url
+        
+        # Add more rules for other agents as needed
+
+        return None # No specific agent found
+
+    def _determine_target_agent(self, user_message: str) -> str | None:
+        user_message_lower = user_message.lower()
+
+        # Explicit routing rules based on keywords
+        if any(keyword in user_message_lower for keyword in ["code", "script", "python", "program", "develop", "execute"]):
+            for agent_conn in self._remote_agents:
+                if agent_conn.card.name == "Coder Agent":
+                    return agent_conn.card.url
+        
+        if any(keyword in user_message_lower for keyword in ["video", "film", "clip", "generate video", "content syndication", "visuals"]):
+            for agent_conn in self._remote_agents:
+                if agent_conn.card.name == "VEO Video Generation Agent":
+                    return agent_conn.card.url
+        
+        # Add more rules for other agents as needed
+
+        return None # No specific agent found

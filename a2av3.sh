@@ -55,6 +55,7 @@ for port in "${AGENT_PORTS[@]}"; do
     fi
   fi
 done
+export A2A_HOST=ADK
 source .venv/bin/activate
 
 # Start all agents and redirect output to log files
@@ -67,7 +68,9 @@ for i in "${!AGENT_COMMANDS[@]}"; do
   log_file="$LOG_DIR/agent_${port}.log"
 
   echo "Starting agent: $cmd (logging to $log_file)"
-  nohup bash -c "source .venv/bin/activate && $cmd" > "$log_file" 2>&1 &
+        nohup bash -c 'source .venv/bin/activate && export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH" && '$cmd' > '$log_file' 2>&1' &
+
+
 done
 
 echo "All agents started in the background. Check logs in the 'logs' directory for details."

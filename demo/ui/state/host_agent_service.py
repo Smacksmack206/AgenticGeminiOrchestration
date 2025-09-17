@@ -35,7 +35,7 @@ from .state import (
 )
 
 
-server_url = 'http://localhost:12000'
+server_url = 'http://localhost:8000'
 
 
 async def ListConversations() -> list[Conversation]:

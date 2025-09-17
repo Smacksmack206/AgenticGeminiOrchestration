@@ -11,9 +11,39 @@ class CoderAgent:
     """Coder Agent."""
 
     async def invoke(self, query: str) -> str:
-        if query.startswith("write"):
-            return "```python\nprint('Hello from the Coder Agent!')\n```"
-        elif query.startswith("execute"):
+        query_lower = query.lower()
+        if query_lower.startswith("write"):
+            # Handle requests to write code
+            if "hello world" in query_lower:
+                if "python" in query_lower and "rust" in query_lower:
+                    return """🐍 **Python Hello World:**
+```python
+print("Hello, World!")
+```
+
+🦀 **Rust Hello World:**
+```rust
+fn main() {
+    println!("Hello, World!");
+}
+```
+
+📊 **Key Differences:**
+
+1. **Syntax**: Python uses `print()` function, Rust uses `println!()` macro
+2. **Structure**: Rust requires a `main()` function as entry point, Python executes top-level code
+3. **Compilation**: Python is interpreted, Rust is compiled
+4. **Type System**: Python is dynamically typed, Rust is statically typed
+5. **Memory Management**: Python has garbage collection, Rust uses ownership system
+6. **Performance**: Rust typically runs faster due to compilation and zero-cost abstractions
+7. **Semicolons**: Rust requires semicolons, Python doesn't
+8. **Macros**: Rust `println!` is a macro (note the `!`), Python `print` is a function"""
+                elif "python" in query_lower:
+                    return "🐍 **Python Hello World:**\n```python\nprint('Hello, World!')\n```"
+                elif "rust" in query_lower:
+                    return "🦀 **Rust Hello World:**\n```rust\nfn main() {\n    println!(\"Hello, World!\");\n}\n```"
+            return "💻 **Code Example:**\n```python\nprint('Hello from the Coder Agent!')\n```"
+        elif query_lower.startswith("execute"):
             code_to_execute = query.replace("execute", "").strip()
             if not code_to_execute:
                 return "Please provide code to execute after 'execute'."
@@ -47,11 +77,11 @@ class CoderAgent:
             if not output:
                 output = "Execution completed with no output."
 
-            return f"Code executed.\n{output}"
+            return f"⚡ **Code Execution Result:**\n{output}"
         except subprocess.TimeoutExpired:
-            return "Code execution timed out."
+            return "⏱️ **Execution Timeout:** Code execution timed out (5 second limit)."
         except Exception as e:
-            return f"An error occurred during code execution: {e}"
+            return f"❌ **Execution Error:** {e}"
 
 
 class CoderAgentExecutor(AgentExecutor):

@@ -20,15 +20,13 @@ TaskCallbackArg = Task | TaskStatusUpdateEvent | TaskArtifactUpdateEvent
 TaskUpdateCallback = Callable[[TaskCallbackArg, AgentCard], Task]
 
 
-class RemoteAgentConnection:
+class RemoteAgentConnections:
     """A class to hold the connections to the remote agents."""
 
-    def __init__(self, url: str, http_client, task_callback: TaskUpdateCallback, agent_card: AgentCard | None = None):
-        self.url = url
-        self.agent_client: Client = ClientFactory(http_client).create(agent_card if agent_card else url)
-        self.card: AgentCard = agent_card if agent_card else self.agent_client.agent_card
+    def __init__(self, client_factory: ClientFactory, agent_card: AgentCard):
+        self.agent_client: Client = client_factory.create(agent_card)
+        self.card: AgentCard = agent_card
         self.pending_tasks = set()
-        self.task_callback = task_callback
 
     def get_agent(self) -> AgentCard:
         return self.card
@@ -56,11 +54,3 @@ class RemoteAgentConnection:
             TaskState.input_required,
             TaskState.unknown,
         ]
-
-    async def get_task_status(self, task_id: str, session_id: str) -> str:
-        # This is a placeholder. In a real scenario, you'd query the remote agent for task status.
-        return f"Status for task {task_id} in session {session_id}: Unknown"
-
-    async def cancel_task(self, task_id: str, session_id: str) -> str:
-        # This is a placeholder. In a real scenario, you'd send a cancel request to the remote agent.
-        return f"Cancellation for task {task_id} in session {session_id}: Not supported"

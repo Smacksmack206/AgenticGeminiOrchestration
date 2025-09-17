@@ -3,9 +3,7 @@ import base64
 import datetime
 import json
 import os
-import re
 import uuid
-from typing import Dict, List, Optional, Tuple
 
 import httpx
 
@@ -32,7 +30,7 @@ from google.adk.events.event import Event as ADKEvent
 from google.adk.events.event_actions import EventActions as ADKEventActions
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
-
+from demo.ui.service.server.file_based_session_service import FileBasedSessionService
 from google.genai import types
 from samples.python.hosts.multiagent.host_agent import HostAgent
 from samples.python.hosts.multiagent.remote_agent_connection import TaskCallbackArg
@@ -42,112 +40,13 @@ from demo.ui.service.server.application_manager import ApplicationManager
 from demo.ui.service.types import Conversation, Event
 
 
-class IntelligentAgentRouter:
-    """Fast, reliable agent routing system that matches requests to the best agent"""
-    
-    def __init__(self):
-        self.agent_patterns: Dict[str, List[Tuple[str, float]]] = {}
-        self.agent_capabilities: Dict[str, AgentCard] = {}
-        self.fallback_agent: Optional[str] = None
-        
-    def register_agent(self, agent_card: AgentCard):
-        """Register an agent and build routing patterns"""
-        url = agent_card.url
-        self.agent_capabilities[url] = agent_card
-        
-        # Build routing patterns from agent skills
-        patterns = []
-        
-        for skill in agent_card.skills:
-            # High priority patterns from skill name and description
-            skill_keywords = self._extract_keywords(skill.name + " " + skill.description)
-            for keyword in skill_keywords:
-                patterns.append((keyword.lower(), 0.9))
-            
-            # Medium priority patterns from tags
-            for tag in skill.tags:
-                patterns.append((tag.lower(), 0.7))
-            
-            # High priority patterns from examples
-            for example in skill.examples:
-                example_keywords = self._extract_keywords(example)
-                for keyword in example_keywords:
-                    patterns.append((keyword.lower(), 0.8))
-        
-        # Add agent-specific patterns
-        if "coder" in agent_card.name.lower() or "code" in agent_card.description.lower():
-            patterns.extend([
-                (r'\b(code|coding|program|script|function|debug|execute|run)\b', 1.0),
-                (r'\b(python|javascript|java|c\+\+|html|css|sql)\b', 0.95),
-                (r'\b(write.*code|create.*script|fix.*bug|implement)\b', 0.9),
-            ])
-            
-        elif "video" in agent_card.name.lower() or "veo" in agent_card.name.lower():
-            patterns.extend([
-                (r'\b(video|generate.*video|create.*video|veo)\b', 1.0),
-                (r'\b(animation|clip|movie|footage|visual)\b', 0.8),
-                (r'\b(generate.*from.*prompt|text.*to.*video)\b', 0.95),
-            ])
-        
-        self.agent_patterns[url] = patterns
-        
-        # Set fallback agent (prefer coder agent as general purpose)
-        if "coder" in agent_card.name.lower() and not self.fallback_agent:
-            self.fallback_agent = url
-    
-    def _extract_keywords(self, text: str) -> List[str]:
-        """Extract meaningful keywords from text"""
-        # Remove common stop words and extract meaningful terms
-        stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'that', 'this', 'these', 'those'}
-        
-        # Extract words (3+ characters, not stop words)
-        words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
-        return [word for word in words if word not in stop_words]
-    
-    def route_message(self, message_text: str) -> Optional[str]:
-        """Route message to best agent based on content analysis"""
-        if not message_text or not self.agent_patterns:
-            return self.fallback_agent
-        
-        message_lower = message_text.lower()
-        agent_scores: Dict[str, float] = {}
-        
-        # Score each agent based on pattern matches
-        for agent_url, patterns in self.agent_patterns.items():
-            score = 0.0
-            matches = 0
-            
-            for pattern, weight in patterns:
-                if isinstance(pattern, str) and pattern.startswith('\\b'):
-                    # Regex pattern
-                    if re.search(pattern, message_lower):
-                        score += weight
-                        matches += 1
-                else:
-                    # Simple keyword match
-                    if pattern in message_lower:
-                        score += weight
-                        matches += 1
-            
-            # Normalize score by number of patterns to avoid bias toward agents with more patterns
-            if matches > 0:
-                agent_scores[agent_url] = score / len(patterns) * matches
-        
-        # Return agent with highest score, or fallback if no matches
-        if agent_scores:
-            best_agent = max(agent_scores.items(), key=lambda x: x[1])
-            if best_agent[1] > 0.1:  # Minimum confidence threshold
-                return best_agent[0]
-        
-        return self.fallback_agent
-    
-    def get_agent_info(self, agent_url: str) -> Optional[AgentCard]:
-        """Get agent card for a given URL"""
-        return self.agent_capabilities.get(agent_url)
-
-
 class ADKHostManager(ApplicationManager):
-    """Enhanced host manager with intelligent agent routing"""
+    """An implementation of memory based management with fake agent actions
+
+    This implements the interface of the ApplicationManager to plug into
+    the AgentServer. This acts as the service contract that the Mesop app
+    uses to send messages to the agent and provide details about the executions.
+    """
 
     def __init__(
         self,
@@ -162,14 +61,12 @@ class ADKHostManager(ApplicationManager):
         self._pending_message_ids: list[str] = []
         self._agents: list[AgentCard] = []
         self._artifact_chunks: dict[str, list[Artifact]] = {}
-        self._session_service = InMemorySessionService()
+        self._session_service = FileBasedSessionService()
         self._artifact_service = InMemoryArtifactService()
         self._memory_service = InMemoryMemoryService()
-        self._http_client = http_client
+        self._http_client = http_client # Add this line
         self._host_agent = HostAgent([], http_client, self.task_callback)
         self._context_to_conversation: dict[str, str] = {}
-        self._router = IntelligentAgentRouter()
-        
         self.user_id = 'test_user'
         self.app_name = 'A2A'
         self.api_key = api_key or os.environ.get('GOOGLE_API_KEY', '')
@@ -178,30 +75,54 @@ class ADKHostManager(ApplicationManager):
             or os.environ.get('GOOGLE_GENAI_USE_VERTEXAI', '').upper() == 'TRUE'
         )
 
-        print(f"🔵 CANARY INIT: API key: {self.api_key[:10]}... (length: {len(self.api_key)})")
-        print(f"🔵 CANARY INIT: Uses Vertex AI: {self.uses_vertex_ai}")
-
         # Set environment variables based on auth method
         if self.uses_vertex_ai:
-            os.environ['GOOGLE_API_KEY'] = ''
+            os.environ['GOOGLE_API_KEY'] = ''  # Clear API key if using Vertex AI
             os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'TRUE'
-            print(f"🔵 CANARY INIT: Configured for Vertex AI")
+
         elif self.api_key:
+            # Use API key authentication
             os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'FALSE'
             os.environ['GOOGLE_API_KEY'] = self.api_key
-            print(f"🔵 CANARY INIT: Configured for API key authentication")
-
-        self._initialize_host()
 
         # Map of message id to task id
         self._task_map: dict[str, str] = {}
         # Map to manage 'lost' message ids until protocol level id is introduced
-        self._next_id: dict[str, str] = {}
+        self._next_id: dict[
+            str, str
+        ] = {}  # dict[str, str]: previous message to next message
         self.AGENTS_FILE = os.path.join(os.getcwd(), 'agents.json')
         self._load_agents()
 
-    def _initialize_host(self):
-        """Initialize the host agent and runner"""
+    def _load_agents(self):
+        if os.path.exists(self.AGENTS_FILE):
+            try:
+                with open(self.AGENTS_FILE, 'r') as f:
+                    data = json.load(f)
+                    self._agents = [AgentCard(**agent_data) for agent_data in data]
+            except Exception as e:
+                print(f"Error loading agents from {self.AGENTS_FILE}: {e}")
+                self._agents = []
+        else:
+            self._agents = []
+
+    def _save_agents(self):
+        print(f"Attempting to save agents to: {self.AGENTS_FILE}")
+        try:
+            with open(self.AGENTS_FILE, 'w') as f:
+                json.dump([agent.dict() for agent in self._agents], f, indent=2)
+            print(f"Successfully saved agents to: {self.AGENTS_FILE}")
+        except Exception as e:
+            print(f"Error saving agents to {self.AGENTS_FILE}: {e}")
+
+    async def async_init(self):
+        # Re-create HostAgent with the current list of agents
+        self._host_agent = HostAgent(
+            [agent.url for agent in self._agents], # Pass the list of agent URLs
+            self._http_client,
+            self.task_callback
+        )
+        await self._host_agent.initialize_remote_agents()
         agent = self._host_agent.create_agent()
         self._host_runner = Runner(
             app_name=self.app_name,
@@ -211,59 +132,7 @@ class ADKHostManager(ApplicationManager):
             memory_service=self._memory_service,
         )
 
-    def _load_agents(self):
-        """Load agents from file and register with router"""
-        if os.path.exists(self.AGENTS_FILE):
-            try:
-                with open(self.AGENTS_FILE, 'r') as f:
-                    data = json.load(f)
-                    self._agents = [AgentCard(**agent_data) for agent_data in data]
-                    
-                # Register agents with router
-                for agent in self._agents:
-                    self._router.register_agent(agent)
-                    
-            except Exception as e:
-                print(f"Error loading agents from {self.AGENTS_FILE}: {e}")
-                self._agents = []
-        else:
-            self._agents = []
-
-    def _save_agents(self):
-        """Save agents to file"""
-        try:
-            with open(self.AGENTS_FILE, 'w') as f:
-                json.dump([agent.dict() for agent in self._agents], f, indent=2)
-        except Exception as e:
-            print(f"Error saving agents to {self.AGENTS_FILE}: {e}")
-
-    async def async_init(self):
-        """Initialize the host agent with current agent list"""
-        print(f"🔵 CANARY ASYNC_INIT: Starting with {len(self._agents)} agents")
-        agent_urls = [agent.url for agent in self._agents]
-        print(f"🔵 CANARY ASYNC_INIT: Agent URLs: {agent_urls}")
-        
-        self._host_agent = HostAgent(
-            agent_urls,
-            self._http_client,
-            self.task_callback
-        )
-        
-        print(f"🔵 CANARY ASYNC_INIT: Initializing remote agents...")
-        try:
-            await self._host_agent.initialize_remote_agents()
-            print(f"🔵 CANARY ASYNC_INIT: Remote agents initialized successfully")
-        except Exception as e:
-            print(f"🔴 CANARY ASYNC_INIT FAIL: Error initializing remote agents: {e}")
-            import traceback
-            traceback.print_exc()
-            
-        print(f"🔵 CANARY ASYNC_INIT: Initializing host...")
-        self._initialize_host()
-        print(f"🔵 CANARY ASYNC_INIT: Complete")
-
     async def create_conversation(self) -> Conversation:
-        """Create a new conversation"""
         session = await self._session_service.create_session(
             app_name=self.app_name, user_id=self.user_id
         )
@@ -273,85 +142,53 @@ class ADKHostManager(ApplicationManager):
         return c
 
     async def delete_conversation(self, conversation_id: str) -> bool:
-        """Delete a conversation"""
         initial_len = len(self._conversations)
         self._conversations = [c for c in self._conversations if c.conversation_id != conversation_id]
+        # Also delete the session from the session service
         await self._session_service.delete_session(self.app_name, self.user_id, conversation_id)
         return len(self._conversations) < initial_len
 
     def update_api_key(self, api_key: str):
-        """Update the API key and reinitialize if needed"""
-        print(f"🔵 CANARY API: Updating API key from {self.api_key[:10]}... to {api_key[:10]}...")
+        """Update the API key and reinitialize the host if needed"""
         if api_key and api_key != self.api_key:
             self.api_key = api_key
+
+            # Only update if not using Vertex AI
             if not self.uses_vertex_ai:
                 os.environ['GOOGLE_API_KEY'] = api_key
-                print(f"🔵 CANARY API: Set environment GOOGLE_API_KEY")
-                # Reinitialize the host to pick up new API key
+                # Reinitialize host with new API key
                 self._initialize_host()
-                print(f"🔵 CANARY API: Reinitialized host with new API key")
-            self._task_map = {}
+
+                # Map of message id to task id
+                self._task_map = {}
 
     def sanitize_message(self, message: Message) -> Message:
-        """Sanitize message for processing"""
         if message.context_id:
             conversation = self.get_conversation(message.context_id)
             if not conversation:
                 return message
+            # Check if the last event in the conversation was tied to a task.
             if conversation.messages:
                 task_id = conversation.messages[-1].task_id
                 if task_id and task_still_open(
-                    next(filter(lambda x: x and x.id == task_id, self._tasks), None)
+                    next(
+                        filter(lambda x: x and x.id == task_id, self._tasks),
+                        None,
+                    )
                 ):
                     message.task_id = task_id
         return message
 
     async def process_message(self, message: Message):
-        """Process message with intelligent routing - FULL CANARY LOGGING"""
-        print(f"🔵 CANARY 1: Starting process_message for {message.message_id}")
-        print(f"🔵 CANARY 1.1: Message context_id: {message.context_id}")
-        print(f"🔵 CANARY 1.2: Message task_id: {message.task_id}")
-        
-        # Extract message text for routing
-        message_text = ""
-        if message.parts and message.parts[0].root.kind == 'text':
-            message_text = message.parts[0].root.text
-            print(f"🔵 CANARY 1.3: Extracted message text: '{message_text}'")
-        else:
-            print(f"🔴 CANARY 1.3 FAIL: No text content found in message parts")
-        
-        # Let the host agent do its own routing
-        print(f"🔵 CANARY 2: Letting host agent handle routing")
-        agent_name = "Host Agent"
-        
-        print(f"🔵 CANARY 3: Setting up message processing")
+        print(f"Processing message: {message.message_id} - {message.parts[0].root.text if message.parts and message.parts[0].root.kind == 'text' else 'Non-text message'}")
         message_id = message.message_id
         if message_id:
             self._pending_message_ids.append(message_id)
-            print(f"🔵 CANARY 3.1: Added message {message_id} to pending list")
-        else:
-            print(f"🔴 CANARY 3.1 FAIL: No message_id found")
-            
         context_id = message.context_id
-        print(f"🔵 CANARY 3.2: Using context_id: {context_id}")
-        
         conversation = self.get_conversation(context_id)
-        if conversation:
-            print(f"🔵 CANARY 3.3: Found conversation with {len(conversation.messages)} existing messages")
-        else:
-            print(f"🔴 CANARY 3.3 FAIL: No conversation found for context_id: {context_id}")
-            print(f"🔵 CANARY 3.3.1: Creating new conversation for context_id: {context_id}")
-            conversation = Conversation(conversation_id=context_id, is_active=True)
-            self._conversations.append(conversation)
-            print(f"🔵 CANARY 3.3.2: Created conversation. Total conversations: {len(self._conversations)}")
-            
         self._messages.append(message)
-        print(f"🔵 CANARY 3.4: Added message to global messages list (total: {len(self._messages)})")
-        
         if conversation:
             conversation.messages.append(message)
-            print(f"🔵 CANARY 3.5: Added message to conversation (total: {len(conversation.messages)})")
-            
         self.add_event(
             Event(
                 id=str(uuid.uuid4()),
@@ -360,225 +197,95 @@ class ADKHostManager(ApplicationManager):
                 timestamp=datetime.datetime.utcnow().timestamp(),
             )
         )
-        print(f"🔵 CANARY 3.6: Added user event")
-        
-        # Add processing status message
-        print(f"🔵 CANARY 3.7: Creating processing status message")
-        processing_response = Message(
-            parts=[Part(root=TextPart(text=f"🤖 **Processing your request...**\n\nAnalyzing: \"{message_text[:100]}{'...' if len(message_text) > 100 else ''}\"\n\nThe host agent will determine the best agent for your request..."))],
-            role=Role.agent,
-            message_id=str(uuid.uuid4()),
-            context_id=message.context_id,
-            task_id=message.task_id,
+        final_event = None
+        # Determine if a task is to be resumed.
+        session = await self._session_service.get_session(
+            app_name='A2A', user_id='test_user', session_id=context_id
         )
-        
-        # Add processing response to messages and conversation
-        print(f"🔵 CANARY 3.8: Adding processing response to messages list")
-        self._messages.append(processing_response)
-        if conversation:
-            conversation.messages.append(processing_response)
-            print(f"🔵 CANARY 3.9: Added processing response to conversation (total: {len(conversation.messages)})")
-            
-        # Add processing event
-        print(f"🔵 CANARY 3.10: Adding processing event")
-        self.add_event(
-            Event(
-                id=str(uuid.uuid4()),
-                actor='Host Agent',
-                content=processing_response,
-                timestamp=datetime.datetime.utcnow().timestamp(),
-            )
-        )
-        print(f"🔵 CANARY 3.11: Processing response setup complete")
-
-        # Get session and prepare for processing
-        print(f"🔵 CANARY 4: Getting session for processing")
-        try:
-            session = await self._session_service.get_session(
-                app_name='A2A', user_id='test_user', session_id=context_id
-            )
-            if session:
-                print(f"🔵 CANARY 4.1: Got existing session: {session.id}")
-            else:
-                print(f"🔵 CANARY 4.1: No existing session, creating new one")
-                session = await self._session_service.create_session(
-                    app_name='A2A', user_id='test_user'
-                )
-                print(f"🔵 CANARY 4.1: Created new session: {session.id}")
-        except Exception as e:
-            print(f"🔴 CANARY 4.1 FAIL: Error with session: {e}")
-            print(f"🔵 CANARY 4.1: Attempting to create new session")
-            try:
-                session = await self._session_service.create_session(
-                    app_name='A2A', user_id='test_user'
-                )
-                print(f"🔵 CANARY 4.1: Created fallback session: {session.id}")
-            except Exception as e2:
-                print(f"🔴 CANARY 4.1 FINAL FAIL: Cannot create session: {e2}")
-                return
-            
         task_id = message.task_id
-        print(f"🔵 CANARY 4.2: Using task_id: {task_id}")
-        
-        # Update session state
+        # Update state must happen in an event
         state_update = {
             'task_id': task_id,
             'context_id': context_id,
             'message_id': message.message_id,
         }
-        print(f"🔵 CANARY 4.3: Prepared state update: {state_update}")
-        
-        try:
-            await self._session_service.append_event(
-                session,
-                ADKEvent(
-                    id=ADKEvent.new_id(),
-                    author='host_agent',
-                    invocation_id=ADKEvent.new_id(),
-                    actions=ADKEventActions(state_delta=state_update),
-                ),
-            )
-            print(f"🔵 CANARY 4.4: Appended event to session")
-        except Exception as e:
-            print(f"🔴 CANARY 4.4 FAIL: Error appending event to session: {e}")
+        # Need to upsert session state now, only way is to append an event.
+        await self._session_service.append_event(
+            session,
+            ADKEvent(
+                id=ADKEvent.new_id(),
+                author='host_agent',
+                invocation_id=ADKEvent.new_id(),
+                actions=ADKEventActions(state_delta=state_update),
+            ),
+        )
+        # Determine the target agent programmatically
+        target_agent_url = self._host_agent._determine_target_agent(message.parts[0].root.text)
 
-        # Process message through ADK runner (original working implementation)
-        print(f"🔵 CANARY 5: Starting ADK runner processing")
-        final_event = None
-        
-        try:
-            print(f"🔵 CANARY 5.1: Converting message to ADK content")
-            adk_content = self.adk_content_from_message(message)
-            print(f"🔵 CANARY 5.2: ADK content created with {len(adk_content.parts)} parts")
-            
-            print(f"🔵 CANARY 5.3: Starting ADK runner for message: {message.message_id}")
-            print(f"🔵 CANARY 5.3.1: Using session_id: {session.id}")
-            event_count = 0
-            async for event in self._host_runner.run_async(
-                user_id=self.user_id,
-                session_id=session.id,  # Use the actual session ID, not context_id
-                new_message=adk_content,
+        # Prepare tools for the LLM
+        tools_to_provide = [self._host_agent.send_message, self._host_agent.get_task_status, self._host_agent.cancel_task]
+        tool_kwargs = {}
+
+        if target_agent_url:
+            # If a target agent is determined, provide it as a hint to the LLM
+            # The LLM's instruction will guide it to use send_message with this URL
+            tool_kwargs["remote_agent_url"] = target_agent_url
+            tool_kwargs["session_id"] = session.id # Use session.id instead of session_id
+            tool_kwargs["task_id"] = task_id # Assuming task_id is available in this scope
+        # Determine the target agent programmatically
+        target_agent_url = self._host_agent._determine_target_agent(message.parts[0].root.text)
+
+        # Prepare tools for the LLM
+        tools_to_provide = [self._host_agent.send_message, self._host_agent.get_task_status, self._host_agent.cancel_task]
+        tool_kwargs = {}
+
+        if target_agent_url:
+            # If a target agent is determined, provide it as a hint to the LLM
+            # The LLM's instruction will guide it to use send_message with this URL
+            tool_kwargs["remote_agent_url"] = target_agent_url
+            tool_kwargs["session_id"] = session.id # Use session.id instead of session_id
+            tool_kwargs["task_id"] = task_id # Assuming task_id is available in this scope
+
+        async for event in self._host_runner.run_async(
+            user_id=self.user_id,
+            session_id=context_id,
+            new_message=self.adk_content_from_message(message),
+            tools=tools_to_provide, # Provide all tools
+            tool_kwargs=tool_kwargs # Pass the pre-determined agent URL as tool_kwargs
+        ):
+            if (
+                event.actions.state_delta
+                and 'task_id' in event.actions.state_delta
             ):
-                event_count += 1
-                print(f"🔵 CANARY 5.4.{event_count}: Received event {event.id} from {event.author}")
-                print(f"🔵 CANARY 5.4.{event_count}.1: Event content type: {type(event.content)}")
-                
-                if (
-                    event.actions.state_delta
-                    and 'task_id' in event.actions.state_delta
-                ):
-                    task_id = event.actions.state_delta['task_id']
-                    print(f"🔵 CANARY 5.4.{event_count}.2: Updated task_id from event: {task_id}")
-                
-                print(f"🔵 CANARY 5.4.{event_count}.3: Converting event content to message")
-                try:
-                    event_message = await self.adk_content_to_message(
+                task_id = event.actions.state_delta['task_id']
+            self.add_event(
+                Event(
+                    id=event.id,
+                    actor=event.author,
+                    content=await self.adk_content_to_message(
                         event.content, context_id, task_id
-                    )
-                    print(f"🔵 CANARY 5.4.{event_count}.4: Event message created with {len(event_message.parts)} parts")
-                except Exception as e:
-                    print(f"🔴 CANARY 5.4.{event_count}.4 FAIL: Error converting event content: {e}")
-                    continue
-                    
-                print(f"🔵 CANARY 5.4.{event_count}.5: Adding event to events list")
-                self.add_event(
-                    Event(
-                        id=event.id,
-                        actor=event.author,
-                        content=event_message,
-                        timestamp=event.timestamp,
-                    )
+                    ),
+                    timestamp=event.timestamp,
                 )
-                final_event = event
-                print(f"🔵 CANARY 5.4.{event_count}.6: Event processing complete")
-                
-            print(f"🔵 CANARY 5.5: ADK runner completed. Total events: {event_count}")
-                
-        except Exception as e:
-            print(f"🔴 CANARY 5 FAIL: Error during agent processing: {e}")
-            import traceback
-            traceback.print_exc()
-
-        # Handle response (original pattern)
-        print(f"🔵 CANARY 6: Processing final response")
+            )
+            final_event = event
         response: Message | None = None
         if final_event:
-            print(f"🔵 CANARY 6.1: Final event found: {final_event.id}")
             if (
                 final_event.actions.state_delta
                 and 'task_id' in final_event.actions.state_delta
             ):
-                task_id = final_event.actions.state_delta['task_id']
-                print(f"🔵 CANARY 6.2: Updated task_id from final event: {task_id}")
-                
-            print(f"🔵 CANARY 6.3: Converting final event to response message")
+                task_id = event.actions.state_delta['task_id']
             final_event.content.role = 'model'
-            try:
-                response = await self.adk_content_to_message(
-                    final_event.content, context_id, task_id
-                )
-                print(f"🔵 CANARY 6.4: Response message created with {len(response.parts)} parts")
-                self._messages.append(response)
-                print(f"🔵 CANARY 6.5: Response added to global messages (total: {len(self._messages)})")
-            except Exception as e:
-                print(f"🔴 CANARY 6.4 FAIL: Error creating response message: {e}")
-        else:
-            print(f"🔴 CANARY 6.1 FAIL: No final event received from ADK runner")
+            response = await self.adk_content_to_message(
+                final_event.content, context_id, task_id
+            )
+            self._messages.append(response)
 
         if conversation and response:
             conversation.messages.append(response)
-            print(f"🔵 CANARY 6.6: Response added to conversation (total: {len(conversation.messages)})")
-        elif conversation:
-            print(f"🔴 CANARY 6.6 FAIL: Conversation exists but no response to add")
-        elif response:
-            print(f"🔴 CANARY 6.6 FAIL: Response exists but no conversation found")
-        else:
-            print(f"🔴 CANARY 6.6 FAIL: Neither conversation nor response found")
-            
-        if message_id and message_id in self._pending_message_ids:
-            self._pending_message_ids.remove(message_id)
-            print(f"🔵 CANARY 6.7: Removed message {message_id} from pending list")
-        else:
-            print(f"🔴 CANARY 6.7 FAIL: Message {message_id} not in pending list")
-            
-        print(f"🔵 CANARY 7: process_message completed for {message.message_id}")
+        self._pending_message_ids.remove(message_id)
 
-    async def register_agent(self, url):
-        """Register a new agent"""
-        try:
-            agent_data = get_agent_card(url)
-            if not agent_data.url:
-                agent_data.url = url
-                
-            self._agents.append(agent_data)
-            self._router.register_agent(agent_data)
-            self._host_agent.register_agent_card(agent_data)
-            
-            print(f"Registered agent: {agent_data.name} at {agent_data.url}")
-            self._save_agents()
-            await self.async_init()
-            
-        except Exception as e:
-            print(f"Failed to register agent at {url}: {e}")
-            raise
-
-    async def unregister_agent(self, url: str) -> bool:
-        """Unregister an agent"""
-        initial_len = len(self._agents)
-        self._agents = [agent for agent in self._agents if agent.url != url]
-        
-        if len(self._agents) < initial_len:
-            # Rebuild router with remaining agents
-            self._router = IntelligentAgentRouter()
-            for agent in self._agents:
-                self._router.register_agent(agent)
-                
-            self._save_agents()
-            await self.async_init()
-            return True
-        return False
-
-    # Task management methods (keeping existing implementation)
     def add_task(self, task: Task):
         self._tasks.append(task)
 
@@ -589,10 +296,8 @@ class ADKHostManager(ApplicationManager):
                 return
 
     def task_callback(self, task: TaskCallbackArg, agent_card: AgentCard):
-        """Handle task callbacks"""
-        print(f"Task callback received: {task.id}")
+        print(f"Task callback received: {task.id} - State: {task.status.state if hasattr(task, 'status') else 'N/A'}")
         self.emit_event(task, agent_card)
-        
         if isinstance(task, TaskStatusUpdateEvent):
             current_task = self.add_or_get_task(task)
             current_task.status = task.status
@@ -600,23 +305,20 @@ class ADKHostManager(ApplicationManager):
             self.insert_message_history(current_task, task.status.message)
             self.update_task(current_task)
             return current_task
-            
         if isinstance(task, TaskArtifactUpdateEvent):
             current_task = self.add_or_get_task(task)
             self.process_artifact_event(current_task, task)
             self.update_task(current_task)
             return current_task
-            
+        # Otherwise this is a Task, either new or updated
         if not any(filter(lambda x: x and x.id == task.id, self._tasks)):
             self.attach_message_to_task(task.status.message, task.id)
             self.add_task(task)
             return task
-            
         self.attach_message_to_task(task.status.message, task.id)
         self.update_task(task)
         return task
 
-    # Keep all other existing methods from the original implementation
     def emit_event(self, task: TaskCallbackArg, agent_card: AgentCard):
         content = None
         context_id = task.context_id
@@ -690,6 +392,12 @@ class ADKHostManager(ApplicationManager):
             task.history.append(task.status.message)
         elif not task.history and task.status.message:
             task.history = [task.status.message]
+        else:
+            print(
+                'Message id already in history',
+                task.status.message.message_id if task.status.message else '',
+                task.history,
+            )
 
     def add_or_get_task(self, event: TaskCallbackArg):
         task_id = None
@@ -708,12 +416,14 @@ class ADKHostManager(ApplicationManager):
             context_id = event.context_id
             current_task = Task(
                 id=task_id,
+                # initialize with submitted
                 status=TaskStatus(state=TaskState.submitted),
                 artifacts=[],
                 context_id=context_id,
             )
             self.add_task(current_task)
             return current_task
+
         return current_task
 
     def process_artifact_event(
@@ -721,19 +431,27 @@ class ADKHostManager(ApplicationManager):
     ):
         artifact = task_update_event.artifact
         if not task_update_event.append:
+            # received the first chunk or entire payload for an artifact
             if (
                 task_update_event.last_chunk is None
                 or task_update_event.last_chunk
             ):
+                # last_chunk bit is missing or is set to true, so this is the entire payload
+                # add this to artifacts
                 if not current_task.artifacts:
                     current_task.artifacts = []
                 current_task.artifacts.append(artifact)
             else:
+                # this is a chunk of an artifact, stash it in temp store for assembling
                 if artifact.artifact_id not in self._artifact_chunks:
                     self._artifact_chunks[artifact.artifact_id] = []
                 self._artifact_chunks[artifact.artifact_id].append(artifact)
         else:
-            current_temp_artifact = self._artifact_chunks[artifact.artifact_id][-1]
+            # we received an append chunk, add to the existing temp artifact
+            current_temp_artifact = self._artifact_chunks[artifact.artifact_id][
+                -1
+            ]
+            # TODO handle if current_temp_artifact is missing
             current_temp_artifact.parts.extend(artifact.parts)
             if task_update_event.last_chunk:
                 if current_task.artifacts:
@@ -743,30 +461,20 @@ class ADKHostManager(ApplicationManager):
                 del self._artifact_chunks[artifact.artifact_id][-1]
 
     def add_event(self, event: Event):
-        print(f"🔵 CANARY EVENT: Adding event {event.id} from {event.actor}")
         self._events[event.id] = event
-        print(f"🔵 CANARY EVENT: Total events now: {len(self._events)}")
 
-    def get_conversation(self, conversation_id: str | None) -> Conversation | None:
-        print(f"🔵 CANARY CONV: Looking for conversation {conversation_id}")
+    def get_conversation(
+        self, conversation_id: str | None
+    ) -> Conversation | None:
         if not conversation_id:
-            print(f"🔴 CANARY CONV FAIL: No conversation_id provided")
             return None
-        
-        conversation = next(
+        return next(
             filter(
                 lambda c: c and c.conversation_id == conversation_id,
                 self._conversations,
             ),
             None,
         )
-        
-        if conversation:
-            print(f"🔵 CANARY CONV: Found conversation {conversation_id} with {len(conversation.messages)} messages")
-        else:
-            print(f"🔴 CANARY CONV FAIL: Conversation {conversation_id} not found. Available: {[c.conversation_id for c in self._conversations]}")
-            
-        return conversation
 
     def get_pending_messages(self) -> list[tuple[str, str]]:
         rval = []
@@ -795,7 +503,26 @@ class ADKHostManager(ApplicationManager):
                 rval.append((message_id, ''))
         return rval
 
-    # Properties
+    async def register_agent(self, url):
+        agent_data = get_agent_card(url)
+        if not agent_data.url:
+            agent_data.url = url
+        self._agents.append(agent_data)
+        self._host_agent.register_agent_card(agent_data)
+        print(f"Registered agent: {agent_data.name} at {agent_data.url}")
+        self._save_agents()
+        # Now update the host agent definition
+        await self.async_init()
+
+    async def unregister_agent(self, url: str) -> bool:
+        initial_len = len(self._agents)
+        self._agents = [agent for agent in self._agents if agent.url != url]
+        if len(self._agents) < initial_len:
+            self._save_agents()
+            await self.async_init()
+            return True
+        return False
+
     @property
     def agents(self) -> list[AgentCard]:
         return self._agents
@@ -812,7 +539,6 @@ class ADKHostManager(ApplicationManager):
     def events(self) -> list[Event]:
         return sorted(self._events.values(), key=lambda x: x.timestamp)
 
-    # Content conversion methods (keeping existing implementation)
     def adk_content_from_message(self, message: Message) -> types.Content:
         parts: list[types.Part] = []
         for p in message.parts:
@@ -856,10 +582,11 @@ class ADKHostManager(ApplicationManager):
             )
         for part in content.parts:
             if part.text:
+                # try parse as data
                 try:
                     data = json.loads(part.text)
                     parts.append(Part(root=DataPart(data=data)))
-                except:
+                except:  # noqa: E722
                     parts.append(Part(root=TextPart(text=part.text)))
             elif part.inline_data:
                 parts.append(
@@ -883,6 +610,8 @@ class ADKHostManager(ApplicationManager):
                         )
                     )
                 )
+            # These aren't managed by the A2A message structure, these are internal
+            # details of ADK, we will simply flatten these to json representations.
             elif part.video_metadata:
                 parts.append(
                     Part(root=DataPart(data=part.video_metadata.model_dump()))
@@ -967,7 +696,9 @@ class ADKHostManager(ApplicationManager):
         future = asyncio.run_coroutine_threadsafe(
             self.process_message(message), loop
         )
-        return future
+        return (
+            future  # You can call future.result() to get the result if needed
+        )
 
 
 def get_message_id(m: Message | None) -> str | None:

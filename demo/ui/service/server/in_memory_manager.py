@@ -46,6 +46,27 @@ class InMemoryFakeAgentManager(ApplicationManager):
         self._next_message_idx = 0
         self._agents = []
         self._task_map = {}
+        self.AGENTS_FILE = os.path.join(os.path.dirname(__file__), 'agents.json')
+        self._load_agents()
+
+    def _load_agents(self):
+        if os.path.exists(self.AGENTS_FILE):
+            try:
+                with open(self.AGENTS_FILE, 'r') as f:
+                    data = json.load(f)
+                    self._agents = [AgentCard(**agent_data) for agent_data in data]
+            except Exception as e:
+                print(f"Error loading agents from {self.AGENTS_FILE}: {e}")
+                self._agents = []
+        else:
+            self._agents = []
+
+    def _save_agents(self):
+        try:
+            with open(self.AGENTS_FILE, 'w') as f:
+                json.dump([agent.model_dump() for agent in self._agents], f, indent=2)
+        except Exception as e:
+            print(f"Error saving agents to {self.AGENTS_FILE}: {e}")
 
     def create_conversation(self) -> Conversation:
         conversation_id = str(uuid.uuid4())
@@ -203,6 +224,15 @@ class InMemoryFakeAgentManager(ApplicationManager):
         if not agent_data.url:
             agent_data.url = url
         self._agents.append(agent_data)
+        self._save_agents()
+
+    def unregister_agent(self, url: str) -> bool:
+        initial_len = len(self._agents)
+        self._agents = [agent for agent in self._agents if agent.url != url]
+        if len(self._agents) < initial_len:
+            self._save_agents()
+            return True
+        return False
 
     @property
     def agents(self) -> list[AgentCard]:

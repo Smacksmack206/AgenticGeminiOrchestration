@@ -1,0 +1,30 @@
+bash: -c: line 0: unexpected EOF while looking for matching `"'
+bash: -c: line 1: syntax error: unexpected end of file
+bash: -c: line 0: unexpected EOF while looking for matching `"'
+bash: -c: line 1: syntax error: unexpected end of file
+bash: -c: line 0: unexpected EOF while looking for matching `"'
+bash: -c: line 1: syntax error: unexpected end of file
+bash: -c: line 0: unexpected EOF while looking for matching `"'
+bash: -c: line 1: syntax error: unexpected end of file
+bash: -c: line 0: unexpected EOF while looking for matching `"'
+bash: -c: line 1: syntax error: unexpected end of file
+bash: -c: line 0: unexpected EOF while looking for matching `"'
+bash: -c: line 1: syntax error: unexpected end of file
+bash: line 1:  1325 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1:  3882 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1:  5407 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1:  6523 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1:  7248 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1:  7766 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 10036 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 11888 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 15188 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 16371 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 18936 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 19566 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 20686 Terminated: 15          .venv/bin/python -m samples.python.agents.veo_video_gen --host 0.0.0.0 --port 12200 > ./logs/agent_12200.log 2>&1
+bash: line 1: 28522 Terminated: 15          .venv/bin/python -m uvicorn demo.ui.main:app --host 0.0.0.0 --port 8000 --log-level debug > ./logs/agent_8000.log 2>&1
+bash: line 1: 28529 Terminated: 15          .venv/bin/python -m uvicorn samples.python.agents.coder.__main__:app --host 0.0.0.0 --port 12111 --log-level debug > ./logs/agent_12111.log 2>&1
+bash: line 1: 31608 Terminated: 15          .venv/bin/python -m uvicorn samples.python.agents.coder.__main__:app --host 0.0.0.0 --port 12111 --log-level debug > ./logs/agent_12111.log 2>&1
+bash: line 1: 34922 Terminated: 15          .venv/bin/python -m uvicorn demo.ui.main:app --host 0.0.0.0 --port 8000 --log-level debug > ./logs/agent_8000.log 2>&1
+bash: line 1: 34931 Terminated: 15          .venv/bin/python -m uvicorn samples.python.agents.coder.__main__:app --host 0.0.0.0 --port 12111 --log-level debug > ./logs/agent_12111.log 2>&1

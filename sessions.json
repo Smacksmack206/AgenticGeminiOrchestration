@@ -133,5 +133,1069 @@
         "timestamp": 1757937044.443418
       }
     ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "8097310a-2164-4079-9961-d6998e36438e",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "f57fcb28-905a-47b2-97b9-1291c1fd599d",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "8097310a-2164-4079-9961-d6998e36438e",
+            "message_id": "9442aa7b-3f67-4d80-b16e-7b7602333977"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "822ad195-8b91-4744-85f1-0177dc07de99",
+        "timestamp": 1757964270.229883
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "b1953138-c0d0-40de-a146-5021ac51de85",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "34ef7151-5399-4acf-b9bd-5f233dd74e98",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "b1953138-c0d0-40de-a146-5021ac51de85",
+            "message_id": "26aa789e-203a-4693-b80c-5b11376a1793"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "d86f4179-b32a-435f-8104-cda7c924ce16",
+        "timestamp": 1757964596.203919
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "a41ad18c-28a6-4bba-bcdd-2bfcce0d70b9",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "45ff672c-ca61-4a56-b2d4-ee64a977ec7d",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "a41ad18c-28a6-4bba-bcdd-2bfcce0d70b9",
+            "message_id": "ec8ef120-e470-4335-87a2-618291d149b6"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "c076c17b-dd37-46a7-846e-c2c1b6ae4b17",
+        "timestamp": 1757964744.654873
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "a6beccd3-2ab2-4d5d-a80d-5e6b53edb616",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "29651d5b-0667-44c7-8288-20ed387acc31",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "a6beccd3-2ab2-4d5d-a80d-5e6b53edb616",
+            "message_id": "0f9ac925-e17e-49c1-9ed5-88aeedb063b9"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "e2b7079f-7756-4f5c-b529-bb295b38bcec",
+        "timestamp": 1757966790.370659
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "45334302-aa02-4ac4-8743-1363cce093b8",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "571fdf6e-edc4-4017-8c89-548899c16e1c",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "45334302-aa02-4ac4-8743-1363cce093b8",
+            "message_id": "5fe7ef2e-105a-43e2-8ba1-8bf4c8d7043a"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "86183298-770f-46bf-b0f1-15b201e6d5fc",
+        "timestamp": 1757966890.588839
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "27f31653-495e-4fc4-8198-8e53fc5a78dc",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "0d4f4502-6c08-48af-9fec-770256fda4f5",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "27f31653-495e-4fc4-8198-8e53fc5a78dc",
+            "message_id": "3a52bee6-6dd5-45c9-a7b8-1b7de8ce5e21"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "681cd349-f03b-4d06-a015-6006e573c3ee",
+        "timestamp": 1757967059.80966
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "14bda4ab-ea9d-4fcf-992f-e4acc0375b5b",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "0daa4595-64cb-4d20-a11c-bb36ece260a2",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "14bda4ab-ea9d-4fcf-992f-e4acc0375b5b",
+            "message_id": "d3188202-3697-45c3-92b6-26d9698d1ff4"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "55deda3c-dfa6-4aed-a097-edb35007fac0",
+        "timestamp": 1757967164.385133
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "02566aec-7e2c-4655-bdc6-ea377e374424",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "c7a9ee16-882a-483f-a854-6e4f5663a731",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "02566aec-7e2c-4655-bdc6-ea377e374424",
+            "message_id": "d7acf123-5e55-4398-be76-45daba9c6d9b"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "cddf8ec8-1309-48b1-af0f-bd6b49153848",
+        "timestamp": 1757970327.958803
+      },
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "c034354e-1a8d-4957-acbd-5c81ea79ce65",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "02566aec-7e2c-4655-bdc6-ea377e374424",
+            "message_id": "3f20db37-7db4-4bb8-a3cd-7e08e922605c"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "8819ed23-2248-4ed5-b862-489a52dbdb9a",
+        "timestamp": 1757970339.482753
+      },
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "fe5a71db-e0d6-4d7e-b599-5cc030b22c45",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "02566aec-7e2c-4655-bdc6-ea377e374424",
+            "message_id": "3b7d4474-3f4c-49d1-aa6a-786b33a2c998"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "15979a0a-65b1-4624-a4d7-f965f40607aa",
+        "timestamp": 1757971560.636852
+      },
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "0c1839d6-fb44-4901-bfe9-5ae414fe8917",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "02566aec-7e2c-4655-bdc6-ea377e374424",
+            "message_id": "edb12a36-dd9d-46ea-9195-8796202d0db3"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "ed06b677-f348-49a8-821b-99f8cf263f92",
+        "timestamp": 1757971629.771375
+      },
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "7421900f-ac68-4700-8882-6ed3f83d3b28",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "02566aec-7e2c-4655-bdc6-ea377e374424",
+            "message_id": "67ddd50d-a277-4cb9-845f-4739100d7e08"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "87032dac-1754-4f5f-ac03-6df038c9d3c0",
+        "timestamp": 1757971722.395233
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "0f8471ec-a2a1-40eb-8fce-b2033d18c895",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "cea18fa6-eeb3-4734-b1e8-3e3bffe7b28f",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "0f8471ec-a2a1-40eb-8fce-b2033d18c895",
+            "message_id": "b29f9fb0-a400-48de-8293-24ffc1f877d4"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "c8a12a3e-253d-4b58-909d-502f1b76111f",
+        "timestamp": 1758004203.95998
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "5664daa8-577d-4489-9a04-9505d19eb1d6",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "e7b66aee-0f51-41cb-9fc7-70b125f0d264",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "5664daa8-577d-4489-9a04-9505d19eb1d6",
+            "message_id": "750e228d-68a6-4a5c-b1dc-8e52f857fcca"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "7a71ae06-a27b-4c40-b97f-1379b83671ca",
+        "timestamp": 1758004967.958265
+      },
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "5af42553-fdd3-4235-bc4d-235c6c31257f",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "5664daa8-577d-4489-9a04-9505d19eb1d6",
+            "message_id": "e27b303f-761d-4d09-ba81-e6794668bfc2"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "e2c8c511-2f10-46b6-9bc8-30ef40a8d838",
+        "timestamp": 1758005295.350878
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "212253f9-5db2-40f4-ba43-2998a9be3f9a",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "72eaff42-c2ed-445d-af99-b475bdd4d817",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "212253f9-5db2-40f4-ba43-2998a9be3f9a",
+            "message_id": "98df36fb-b977-4eb1-9369-20ec53092112"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "2b2da25f-727e-4700-810b-4ea7ff1407c8",
+        "timestamp": 1758005326.29893
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "2eab6470-4efd-4905-bb28-74981a32e5a8",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "55acad24-5b86-4568-80a9-76e6fbad185c",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "2eab6470-4efd-4905-bb28-74981a32e5a8",
+            "message_id": "15e8966e-8687-437c-bfc9-a96dd9983b25"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "6292a683-b13a-4574-b10d-a9e584a80d9f",
+        "timestamp": 1758005932.585185
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "0db725e4-68a2-43c8-892d-5813638fca19",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "32c25441-990e-43d9-a3e9-cdcd40599935",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "0db725e4-68a2-43c8-892d-5813638fca19",
+            "message_id": "4e1f2722-0128-476f-9831-39bc63136d94"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "341ca1df-89ac-4ff2-bdf6-c55cb2e1c65c",
+        "timestamp": 1758006714.825146
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "4eaeb07b-8b6a-431a-a86a-0993a968b6ae",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "4c2fe435-d5aa-45c6-923d-55b4341f0727",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "4eaeb07b-8b6a-431a-a86a-0993a968b6ae",
+            "message_id": "2b854180-2e03-40f4-80bf-df69e2993d31"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "ce025527-9d6c-4689-ab5e-7d8b48451d92",
+        "timestamp": 1758006936.027572
+      },
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "21318811-9c65-4ed7-a586-8b4dfc348419",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "4eaeb07b-8b6a-431a-a86a-0993a968b6ae",
+            "message_id": "b49499b7-470e-46b0-88c0-bf21d96ec295"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "bbdeba8a-e00a-4b0e-8f65-921cd41a9776",
+        "timestamp": 1758007118.95606
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "491104c2-778d-40ae-badc-d3148717ba2e",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "3c8b41f7-dc05-41a0-9f28-0e28af343eff",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "491104c2-778d-40ae-badc-d3148717ba2e",
+            "message_id": "7f32bcb9-3186-45eb-a79d-499130b0f8c5"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "72dc1444-e436-42a2-82a4-de9cbc800267",
+        "timestamp": 1758007126.870478
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "f700594d-0375-4cf2-a4e7-4190f30840f6",
+    "events": []
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "43eabb1d-452d-47f9-b7b8-bb804ce9038f",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "a3461f43-d6f2-4af6-b6bd-19c8c7cd1fa4",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "43eabb1d-452d-47f9-b7b8-bb804ce9038f",
+            "message_id": "d5b0dda3-40c8-44bd-8581-4859f57ffb34"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "8fbc3032-b18f-4393-ae8b-219cb668f008",
+        "timestamp": 1758135404.537066
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "13e7c786-da08-4ef2-99cd-a19dde7ed779",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "cdc84965-3f0e-4c4f-a8d6-4620d32a7567",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "13e7c786-da08-4ef2-99cd-a19dde7ed779",
+            "message_id": "1bccbfb1-1d83-4a2d-96ea-57fb47aa1ddf"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "dc3eeb79-e5de-4ecd-b751-f5fa155cdb7b",
+        "timestamp": 1758135897.384834
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "7e165699-ad5f-4f20-bedc-830615335995",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "1e0938cf-5b9f-46b2-a0ea-5e87d7c07334",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "7e165699-ad5f-4f20-bedc-830615335995",
+            "message_id": "0fe902a9-0b4f-4e65-b352-c8f2dc7509d4"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "1336cde6-4b1c-49a2-9948-58c8aea6c292",
+        "timestamp": 1758136121.557375
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "f886e8f1-b38d-4623-b54f-2d0c9fe7c93f",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "307d9dd9-aae9-4693-a30a-cc31f65015a3",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "f886e8f1-b38d-4623-b54f-2d0c9fe7c93f",
+            "message_id": "1d208681-bb3b-4200-8cfa-9e57669e8ac6"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "ba2135ed-88ce-4f91-af09-001e480056b5",
+        "timestamp": 1758136316.058671
+      },
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "a0795cda-6ce3-4aa2-8cc6-8d42a0af5492",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "f886e8f1-b38d-4623-b54f-2d0c9fe7c93f",
+            "message_id": "66ebf7c2-a2ea-4d72-8a02-feca9a2eddb2"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "89c3acaf-ddd3-4c26-8bd3-4a421d0cc4ab",
+        "timestamp": 1758136441.760504
+      }
+    ]
+  },
+  {
+    "app_name": "A2A",
+    "user_id": "test_user",
+    "id": "c76e273f-5ee8-4b38-b755-874c14f42a62",
+    "events": [
+      {
+        "content": null,
+        "grounding_metadata": null,
+        "partial": null,
+        "turn_complete": null,
+        "finish_reason": null,
+        "error_code": null,
+        "error_message": null,
+        "interrupted": null,
+        "custom_metadata": null,
+        "usage_metadata": null,
+        "live_session_resumption_update": null,
+        "input_transcription": null,
+        "output_transcription": null,
+        "invocation_id": "0d9c4ebd-483c-4df6-9da7-79180f03beeb",
+        "author": "host_agent",
+        "actions": {
+          "skip_summarization": null,
+          "state_delta": {
+            "task_id": null,
+            "context_id": "c76e273f-5ee8-4b38-b755-874c14f42a62",
+            "message_id": "e9718e09-cf5f-495d-b1e2-98674b0945b3"
+          },
+          "artifact_delta": {},
+          "transfer_to_agent": null,
+          "escalate": null,
+          "requested_auth_configs": {},
+          "requested_tool_confirmations": {}
+        },
+        "long_running_tool_ids": null,
+        "branch": null,
+        "id": "cb764bc8-ef54-41a3-a018-ce09390d7178",
+        "timestamp": 1758136472.263214
+      }
+    ]
   }
 ]

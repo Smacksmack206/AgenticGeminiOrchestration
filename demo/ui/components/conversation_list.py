@@ -1,7 +1,7 @@
 import mesop as me
 import pandas as pd
 
-from demo.ui.state.host_agent_service import CreateConversation, DeleteConversation, UpdateAppState
+from demo.ui.state.host_agent_service import CreateConversation, DeleteConversation
 from demo.ui.state.state import AppState, StateConversation
 
 
@@ -16,9 +16,6 @@ def mark_for_delete(e: me.ClickEvent, conversation_id: str):  # pylint: disable=
     delete_state = me.state(DeleteState)
     delete_state.conversation_to_delete = conversation_id
     yield
-
-
-
 
 
 def cancel_delete(e: me.ClickEvent):  # pylint: disable=unused-argument
@@ -39,8 +36,7 @@ async def confirm_delete(e: me.ClickEvent):  # pylint: disable=unused-argument
     
     if success:
         app_state = me.state(AppState)
-        # Re-fetch and update the entire app state to ensure synchronization
-        await UpdateAppState(app_state, app_state.current_conversation_id)
+        app_state.conversations = [c for c in app_state.conversations if c.conversation_id != conversation_id]
         
         if app_state.current_conversation_id == conversation_id:
             app_state.current_conversation_id = ''
@@ -197,7 +193,7 @@ def conversation_list(conversations: list[StateConversation]):
                 # Conversation info (clickable)
                 with me.box(
                     style=me.Style(flex_grow=1, cursor='pointer'),
-                    on_click=lambda e, cid=conversation.conversation_id: navigate_to_conversation(cid)
+                    on_click=lambda e, cid=conversation.conversation_id: navigate_to_conversation(e, cid)
                 ):
                     me.text(
                         conversation.conversation_name or f"Conversation {conversation.conversation_id[:8]}",
@@ -211,7 +207,7 @@ def conversation_list(conversations: list[StateConversation]):
                 # Delete button
                 me.button(
                     'Delete',
-                    key=f'delete_btn_{i}',  # Use index as key
+                    key=f'delete_btn_{i}',
                     on_click=lambda e, cid=conversation.conversation_id: mark_for_delete(e, cid),
                     type='flat',
                     style=me.Style(color='red')
@@ -224,7 +220,7 @@ def conversation_list(conversations: list[StateConversation]):
 
 
 
-def navigate_to_conversation(conversation_id: str):
+def navigate_to_conversation(e: me.ClickEvent, conversation_id: str):  # pylint: disable=unused-argument
     """Navigate to conversation"""
     state = me.state(AppState)
     state.current_conversation_id = conversation_id
@@ -275,7 +271,7 @@ def conversation_card(conversation: StateConversation, index: int):
                     gap=8,
                     cursor='pointer',
                 ),
-                on_click=lambda e: navigate_to_conversation(conversation.conversation_id)
+                on_click=lambda e: navigate_to_conversation(e, conversation.conversation_id)
             ):
                 # Title and status row
                 with me.box(
